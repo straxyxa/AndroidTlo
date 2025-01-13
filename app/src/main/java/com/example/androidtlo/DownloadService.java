@@ -3,10 +3,12 @@ package com.example.androidtlo;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -15,7 +17,9 @@ import android.provider.MediaStore;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -90,8 +94,6 @@ public class DownloadService extends Service {
     }
 
 
-
-
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -104,6 +106,7 @@ public class DownloadService extends Service {
         return null;
     }
 
+
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(
@@ -113,40 +116,6 @@ public class DownloadService extends Service {
             );
             NotificationManager manager = getSystemService(NotificationManager.class);
             manager.createNotificationChannel(channel);
-        }
-    }
-    public void saveFile(Context context, byte[] data) {
-        OutputStream outputStream = null;
-        try {
-            Uri fileUri;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                ContentValues values = new ContentValues();
-                values.put(MediaStore.MediaColumns.DISPLAY_NAME, "downloaded_file.txt"); // Имя файла
-                values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS); // Папка "Загрузки"
-                values.put(MediaStore.MediaColumns.MIME_TYPE, "text/plain");
-
-                fileUri = context.getContentResolver().insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values);
-            } else {
-                // Для устройств до Android 10
-                File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "downloaded_file.txt");
-                fileUri = Uri.fromFile(file);
-            }
-
-            if (fileUri != null) {
-                outputStream = context.getContentResolver().openOutputStream(fileUri);
-                outputStream.write(data);
-                Log.i("DownloadService", "Файл успешно сохранен: " + fileUri.toString());
-            }
-        } catch (Exception e) {
-            Log.e("DownloadService", "Ошибка сохранения файла", e);
-        } finally {
-            if (outputStream != null) {
-                try {
-                    outputStream.close();
-                } catch (Exception e) {
-                    Log.e("DownloadService", "Ошибка при закрытии потока", e);
-                }
-            }
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.example.androidtlo;
 
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -20,6 +21,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import java.io.IOException;
@@ -132,6 +134,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+
     private final BroadcastReceiver progressReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -168,7 +172,6 @@ public class MainActivity extends AppCompatActivity {
         // Отображение количества загруженных байтов
         textViewGetByte.setText(postepInfo.mPobranychBajtow + " / " + postepInfo.mRozmiar);
     }
-
 
 
 
