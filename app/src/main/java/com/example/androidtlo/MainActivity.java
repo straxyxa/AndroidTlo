@@ -3,8 +3,10 @@ package com.example.androidtlo;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -32,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private Button buttonGetFile;
     private Handler handler = new Handler(Looper.getMainLooper());
     private ProgressBar progressBar;
+    private TextView textViewGetByte;
 
     private final String  CHANNEL_ID = "file_download_channel";
     private final  Byte  NOTIFICATION_ID = 1;
@@ -129,12 +132,55 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private final BroadcastReceiver progressReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals("com.example.androidtlo.PROGRESS_UPDATE")) {
+                PostepInfo postepInfo = intent.getParcelableExtra("progress_info");
+                if (postepInfo != null) {
+                    // Обновление UI
+                    updateProgressUI(postepInfo);
+                }
+            }
+        }
+    };
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        IntentFilter filter = new IntentFilter("com.example.androidtlo.PROGRESS_UPDATE");
+        registerReceiver(progressReceiver, filter);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unregisterReceiver(progressReceiver);
+    }
+
+    // Метод обновления UI
+    private void updateProgressUI(PostepInfo postepInfo) {
+        if (postepInfo.mRozmiar > 0) {
+            int progress = (int) ((postepInfo.mPobranychBajtow * 100) / postepInfo.mRozmiar);
+            progressBar.setProgress(progress);
+        }
+
+        // Отображение количества загруженных байтов
+        textViewGetByte.setText(postepInfo.mPobranychBajtow + " / " + postepInfo.mRozmiar);
+    }
+
+
+
+
+
     private void initViews() {
         editTextEnterAddress = findViewById(R.id.editTextEnterAddress);
         textViewSizeFile = findViewById(R.id.textViewSizeFile);
         textViewTypeFile = findViewById(R.id.textViewTypeFile);
         buttonGetInfo = findViewById(R.id.buttonGetInfo);
         buttonGetFile = findViewById(R.id.buttonGetFile);
+        progressBar = findViewById(R.id.progressBar);
+        textViewGetByte = findViewById(R.id.textViewGetByte);
     }
 
 }

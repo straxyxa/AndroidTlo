@@ -21,6 +21,7 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -52,39 +53,43 @@ public class DownloadService extends Service {
         return START_NOT_STICKY;
     }
 
+    private void sendProgressBroadcast(long pobranychBajtow, long rozmiar) {
+        Intent intent = new Intent("com.example.androidtlo.PROGRESS_UPDATE");
+        PostepInfo postepInfo = new PostepInfo(pobranychBajtow, rozmiar, pobranychBajtow + "/" + rozmiar + " байт");
+        intent.putExtra("progress_info", postepInfo);
+        sendBroadcast(intent);
+    }
+
+
+    // Обновите основной метод загрузки:
     private void downloadFile(String fileUrl) {
         try {
-
             URL url = new URL(fileUrl);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.connect();
 
-            if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
-                Log.e(TAG, "Ошибка соединения: " + connection.getResponseCode());
-                stopSelf();
-                return;
+            long fileLength = connection.getContentLength();
+
+            try (InputStream input = new BufferedInputStream(connection.getInputStream());
+                 OutputStream output = new FileOutputStream(new File(getExternalFilesDir(null), "downloaded_file.txt"))) {
+
+                byte[] data = new byte[1024];
+                long total = 0;
+                int count;
+                while ((count = input.read(data)) != -1) {
+                    total += count;
+                    output.write(data, 0, count);
+
+                    // Отправка прогресса загрузки
+                    sendProgressBroadcast(total, fileLength);
+                }
             }
-
-            BufferedInputStream input = new BufferedInputStream(connection.getInputStream());
-            byte[] data = new byte[1024];
-            int count;
-            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-
-            while ((count = input.read(data)) != -1) {
-                buffer.write(data, 0, count);
-            }
-
-            // Сохранение файла
-            saveFile(this, buffer.toByteArray());
-
-            input.close();
-            Log.i(TAG, "Файл успешно скачан.");
         } catch (Exception e) {
-            Log.e(TAG, "Ошибка скачивания: ", e);
-        } finally {
-            stopSelf();
+            Log.e("DownloadService", "Ошибка загрузки", e);
         }
     }
+
+
 
 
     @Override
