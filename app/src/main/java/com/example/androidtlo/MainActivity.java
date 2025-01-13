@@ -32,7 +32,6 @@ public class MainActivity extends AppCompatActivity {
     private Button buttonGetFile;
     private Handler handler = new Handler(Looper.getMainLooper());
     private ProgressBar progressBar;
-    private TextView downloadedBytesView;
 
     private final String  CHANNEL_ID = "file_download_channel";
     private final  Byte  NOTIFICATION_ID = 1;
@@ -47,15 +46,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 getFileInfo(getUrl());
-            }
-        });
-        FileDownloder fileDownloder = new FileDownloder(MainActivity.this);
-        buttonGetFile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String url = getUrl();
-                fileDownloder.downloadFile(url, progressBar, downloadedBytesView);
-                sendNotification("Download Started", "Downloading", 0);
             }
         });
     }
@@ -137,52 +127,6 @@ public class MainActivity extends AppCompatActivity {
         textViewTypeFile = findViewById(R.id.textViewTypeFile);
         buttonGetInfo = findViewById(R.id.buttonGetInfo);
         buttonGetFile = findViewById(R.id.buttonGetFile);
-    }
-   // Create channel
-    private  void createNotificationChannel() {
-        String name = "File Download Channel";
-        String descriptionText = "Channel for file download notifications";
-        int importance = 0;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            importance = NotificationManager.IMPORTANCE_HIGH;
-        }
-        NotificationChannel channel = null;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            channel = new NotificationChannel(CHANNEL_ID, name, importance);
-            channel.setDescription(descriptionText);
-        }
-        NotificationManager notificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            notificationManager.createNotificationChannel(channel);
-        }
-    }
-        //resend/update message
-    private  void updateNotification(String title, String message, int progress) {
-        sendNotification(title, message, progress);
-    }
-//send message
-    private void sendNotification(String title, String message, int progress) {
-        Intent intent = new Intent(this, MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(
-                this,
-                0,
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
-        );
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
-                .setContentTitle(title)
-                .setContentText(message)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setContentIntent(pendingIntent)
-                .setOngoing(true)
-                .setProgress(100, progress, false);
-
-        NotificationManager notificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(NOTIFICATION_ID, builder.build());
     }
 
 }
