@@ -48,6 +48,14 @@ public class MainActivity extends AppCompatActivity {
                 getFileInfo(getUrl());
             }
         });
+        buttonGetFile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, DownloadService.class);
+                intent.putExtra("fileUrl", getString(R.string.example_address));
+                startService(intent);
+            }
+        });
     }
 
     private String getUrl() {
