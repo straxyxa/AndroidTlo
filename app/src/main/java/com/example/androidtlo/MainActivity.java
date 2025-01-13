@@ -1,14 +1,9 @@
 package com.example.androidtlo;
 
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -20,9 +15,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
-import androidx.lifecycle.ViewModelProvider;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -37,9 +29,6 @@ public class MainActivity extends AppCompatActivity {
     private Handler handler = new Handler(Looper.getMainLooper());
     private ProgressBar progressBar;
     private TextView textViewGetByte;
-
-    private final String  CHANNEL_ID = "file_download_channel";
-    private final  Byte  NOTIFICATION_ID = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -142,7 +131,6 @@ public class MainActivity extends AppCompatActivity {
             if (intent.getAction().equals("com.example.androidtlo.PROGRESS_UPDATE")) {
                 PostepInfo postepInfo = intent.getParcelableExtra("progress_info");
                 if (postepInfo != null) {
-                    // Обновление UI
                     updateProgressUI(postepInfo);
                 }
             }
@@ -162,17 +150,13 @@ public class MainActivity extends AppCompatActivity {
         unregisterReceiver(progressReceiver);
     }
 
-    // Метод обновления UI
     private void updateProgressUI(PostepInfo postepInfo) {
         if (postepInfo.mRozmiar > 0) {
             int progress = (int) ((postepInfo.mPobranychBajtow * 100) / postepInfo.mRozmiar);
             progressBar.setProgress(progress);
         }
-
-        // Отображение количества загруженных байтов
         textViewGetByte.setText(postepInfo.mPobranychBajtow + " / " + postepInfo.mRozmiar);
     }
-
 
 
 

@@ -45,8 +45,6 @@ public class DownloadService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         String fileUrl = intent.getStringExtra("fileUrl"); // URL файла
         new Thread(() -> downloadFile(fileUrl)).start();
-
-        // Запуск foreground notification
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle("Скачивание файла")
                 .setContentText("Идет скачивание...")
@@ -65,7 +63,6 @@ public class DownloadService extends Service {
     }
 
 
-    // Обновите основной метод загрузки:
     private void downloadFile(String fileUrl) {
         try {
             URL url = new URL(fileUrl);
@@ -83,8 +80,6 @@ public class DownloadService extends Service {
                 while ((count = input.read(data)) != -1) {
                     total += count;
                     output.write(data, 0, count);
-
-                    // Отправка прогресса загрузки
                     sendProgressBroadcast(total, fileLength);
                 }
             }

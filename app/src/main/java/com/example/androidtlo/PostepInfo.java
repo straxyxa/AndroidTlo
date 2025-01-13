@@ -4,9 +4,9 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class PostepInfo implements Parcelable {
-    public long mPobranychBajtow; // Количество загруженных байтов
-    public long mRozmiar;        // Общий размер файла
-    public String mStatus;       // Статус загрузки: "Загрузка", "Завершено", "Ошибка"
+    public long mPobranychBajtow;
+    public long mRozmiar;
+    public String mStatus;
 
     public PostepInfo(long pobranychBajtow, long rozmiar, String status) {
         this.mPobranychBajtow = pobranychBajtow;
