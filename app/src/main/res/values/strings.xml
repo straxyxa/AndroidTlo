@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">AndroidTlo</string>
+    <string name="address">Adres:</string>
+    <string name="enter_url_address_hint">Enter url Address</string>
+    <string name="get_info_button">Pobierz Informacje</string>
+    <string name="rozmiar_pliku">Rozmiar pliku:</string>
+    <string name="_0">0</string>
+    <string name="typ_pliku">Typ pliku:</string>
+    <string name="get_file_button">Pobierz plik</string>
+    <string name="urlValidation1">https://</string>
+    <string name="urlValidation2">www</string>
+    <string name="get_size_file_error">nie udało się otrzymać rozmiar pliku</string>
+    <string name="urlValidation3">http://</string>
+    <string name="get_type_file_error">nie udało się otrzymać typ pliku!</string>
+    <string name="error_field_address">pole adres nie moze być puste!</string>
+    <string name="error_field_address1">pole adres musi zaczynać się od (https://, http://, www.)</string>
+    <string name="example_address">https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.4.36.tar.xz</string>
+    <string name="pobrano_bajt">Pobrano bajtów:</string>
+</resources>
