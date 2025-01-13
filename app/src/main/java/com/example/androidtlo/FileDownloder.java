@@ -12,6 +12,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class FileDownloder {
@@ -27,7 +28,7 @@ public class FileDownloder {
     }
 
     @SuppressLint("UnspecifiedRegisterReceiverFlag")
-    public void downloadFile(String url, ProgressBar progressBar) {
+    public void downloadFile(String url, ProgressBar progressBar, TextView downloadedBytesView) {
         // Настройка загрузки
         DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url))
                 .setTitle("Downloading File")
@@ -44,7 +45,7 @@ public class FileDownloder {
 
         // Запуск загрузки
         downloadID = downloadManager.enqueue(request);
-        monitorDownloadProgress(progressBar);
+        monitorDownloadProgress(progressBar,downloadedBytesView);
 
         // Регистрация BroadcastReceiver
         context.registerReceiver(new BroadcastReceiver() {
@@ -53,14 +54,15 @@ public class FileDownloder {
                 long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
                 if (id == downloadID) {
                     Toast.makeText(context, "Download Completed", Toast.LENGTH_SHORT).show();
-                    progressBar.setProgress(100); // Устанавливаем прогресс на максимум
+                    progressBar.setProgress(100);
                 }
             }
         }, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
     }
 
-    private void monitorDownloadProgress(ProgressBar progressBar) {
+    private void monitorDownloadProgress(ProgressBar progressBar, TextView bytesDownloadedView) {
         handler.postDelayed(new Runnable() {
+            @SuppressLint("SetTextI18n")
             @Override
             public void run() {
                 DownloadManager.Query query = new DownloadManager.Query();
@@ -80,6 +82,7 @@ public class FileDownloder {
                         if (bytesTotal > 0) {
                             int progress = (int) ((bytesDownloaded * 100L) / bytesTotal);
                             progressBar.setProgress(progress);
+                            bytesDownloadedView.setText(bytesDownloaded+"/"+bytesTotal);
                         }
                     } else {
                         Log.e("DownloadError", "Required columns not found");
@@ -89,7 +92,7 @@ public class FileDownloder {
                         int status = cursor.getInt(statusIndex);
                         if (status == DownloadManager.STATUS_SUCCESSFUL || status == DownloadManager.STATUS_FAILED) {
                             cursor.close();
-                            return; // Останавливаем мониторинг
+                            return;
                         }
                     }
                 }

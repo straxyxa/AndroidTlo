@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private Button buttonGetFile;
     private Handler handler = new Handler(Looper.getMainLooper());
     private ProgressBar progressBar;
+    private TextView downloadedBytesView;
 
     private final String  CHANNEL_ID = "file_download_channel";
     private final  Byte  NOTIFICATION_ID = 1;
@@ -53,7 +54,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String url = getUrl();
-                fileDownloder.downloadFile(url, progressBar);
+                fileDownloder.downloadFile(url, progressBar, downloadedBytesView);
+                sendNotification("Download Started", "Downloading", 0);
             }
         });
     }
@@ -137,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
         buttonGetFile = findViewById(R.id.buttonGetFile);
     }
    // Create channel
-    private void createNotificationChannel() {
+    private  void createNotificationChannel() {
         String name = "File Download Channel";
         String descriptionText = "Channel for file download notifications";
         int importance = 0;
@@ -149,7 +151,6 @@ public class MainActivity extends AppCompatActivity {
             channel = new NotificationChannel(CHANNEL_ID, name, importance);
             channel.setDescription(descriptionText);
         }
-
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -157,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
         //resend/update message
-    private void updateNotification(String title, String message, int progress) {
+    private  void updateNotification(String title, String message, int progress) {
         sendNotification(title, message, progress);
     }
 //send message
