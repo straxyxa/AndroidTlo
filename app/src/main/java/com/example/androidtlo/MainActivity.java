@@ -147,8 +147,6 @@ public class MainActivity extends AppCompatActivity {
         NotificationChannel channel = null;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             channel = new NotificationChannel(CHANNEL_ID, name, importance);
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             channel.setDescription(descriptionText);
         }
 
