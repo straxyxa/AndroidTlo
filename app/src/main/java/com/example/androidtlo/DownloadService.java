@@ -46,8 +46,8 @@ public class DownloadService extends Service {
         String fileUrl = intent.getStringExtra("fileUrl"); // URL файла
         new Thread(() -> downloadFile(fileUrl)).start();
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setContentTitle("Скачивание файла")
-                .setContentText("Идет скачивание...")
+                .setContentTitle("Pobieranie pliku")
+                .setContentText("Pobieranie pliku...")
                 .setSmallIcon(android.R.drawable.stat_sys_download)
                 .build();
         startForeground(1, notification);
@@ -57,7 +57,7 @@ public class DownloadService extends Service {
 
     private void sendProgressBroadcast(long pobranychBajtow, long rozmiar) {
         Intent intent = new Intent("com.example.androidtlo.PROGRESS_UPDATE");
-        PostepInfo postepInfo = new PostepInfo(pobranychBajtow, rozmiar, pobranychBajtow + "/" + rozmiar + " байт");
+        PostepInfo postepInfo = new PostepInfo(pobranychBajtow, rozmiar, pobranychBajtow + "/" + rozmiar);
         intent.putExtra("progress_info", postepInfo);
         sendBroadcast(intent);
     }
@@ -84,7 +84,7 @@ public class DownloadService extends Service {
                 }
             }
         } catch (Exception e) {
-            Log.e("DownloadService", "Ошибка загрузки", e);
+            Log.e("DownloadService", "Błąd pobierania", e);
         }
     }
 
@@ -92,7 +92,7 @@ public class DownloadService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.i(TAG, "Служба остановлена");
+        Log.i(TAG, "Serwis zatrzymany");
     }
 
     @Nullable
@@ -106,7 +106,7 @@ public class DownloadService extends Service {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(
                     CHANNEL_ID,
-                    "Канал скачивания",
+                    "Kanał pobierania",
                     NotificationManager.IMPORTANCE_LOW
             );
             NotificationManager manager = getSystemService(NotificationManager.class);
