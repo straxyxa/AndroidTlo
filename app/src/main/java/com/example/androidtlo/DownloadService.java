@@ -43,7 +43,7 @@ public class DownloadService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        String fileUrl = intent.getStringExtra("fileUrl"); // URL файла
+        String fileUrl = intent.getStringExtra("fileUrl");
         new Thread(() -> downloadFile(fileUrl)).start();
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle("Pobieranie pliku")
@@ -57,7 +57,11 @@ public class DownloadService extends Service {
 
     private void sendProgressBroadcast(long pobranychBajtow, long rozmiar) {
         Intent intent = new Intent("com.example.androidtlo.PROGRESS_UPDATE");
-        PostepInfo postepInfo = new PostepInfo(pobranychBajtow, rozmiar, pobranychBajtow + "/" + rozmiar);
+        PostepInfo postepInfo = new PostepInfo(
+                pobranychBajtow,
+                rozmiar,
+                pobranychBajtow + "/" + rozmiar
+        );
         intent.putExtra("progress_info", postepInfo);
         sendBroadcast(intent);
     }
@@ -72,7 +76,9 @@ public class DownloadService extends Service {
             long fileLength = connection.getContentLength();
 
             try (InputStream input = new BufferedInputStream(connection.getInputStream());
-                 OutputStream output = new FileOutputStream(new File(getExternalFilesDir(null), "downloaded_file.txt"))) {
+                 OutputStream output = new FileOutputStream(
+                         new File(getExternalFilesDir(null), "downloaded_file.txt"))
+            ) {
 
                 byte[] data = new byte[1024];
                 long total = 0;
